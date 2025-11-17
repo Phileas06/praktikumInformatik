@@ -1,7 +1,13 @@
 #include <iostream>
 #include <memory>
+#include <vector>
 
 #include "Fahrzeug.h" //niemals cpp datei hier importieren
+
+auto testToCheckUniquePointer(std::unique_ptr<Fahrzeug> ptr) {
+	std::cout << "Funktionswechsel hat geklappt!" << ptr->getName() << endl;
+	return ptr;
+}
 
 auto vAufgabe_1() {
 	Fahrzeug Zug("ICE");
@@ -14,16 +20,49 @@ auto vAufgabe_1() {
 	Fahrzeug* Porsche911 = new Fahrzeug("Porsche911"); // erstellt objekt und speichert auf heap
 
 
-	delete Porsche911;
-	BMW.reset(); //resettet referenzzähler auf 1
-	geliehenerBMW.reset(); //setzt referenzzähler auf 0 => wird gelöscht
+
+
+
+	//std::cout << BMW.use_count() << endl; // gibt 2 aus
+	//BMW.reset(); //resettet referenzzähler auf 1
+	//std::cout << BMW.use_count() << endl; //gibt null aus weil auf nullptr und nullptr hat kein referenzzähler
+	//geliehenerBMW.reset();
+	//geliehenerBMW.reset(); //setzt referenzzähler auf 0 => wird gelöscht
 
 	auto FerrariPtr = std::make_unique<Fahrzeug>("Ferrari");
 	auto BugattiChiron = std::make_unique<Fahrzeug>("Bugatti Chiron");
 
+	FerrariPtr = testToCheckUniquePointer(std::move(FerrariPtr));
+
+	std::cout << "Test" << FerrariPtr->getName() << endl;
+
 	//Shared Pointer
 	auto Tesla = std::make_shared<Fahrzeug>("Tesla");
 
+
+	//vektor erzeugen mit den elementen der unique pointer
+	std::vector<std::unique_ptr<Fahrzeug>> v_upFahrzeuge;
+
+	v_upFahrzeuge.push_back(std::move(FerrariPtr)); //kopie wird erstellt! nicht möglich! Daher move
+	v_upFahrzeuge.push_back(std::move(BugattiChiron));
+
+	//shared pointer vector
+
+	std::vector<shared_ptr<Fahrzeug>> v_spFahrzeuge;
+
+	v_spFahrzeuge.push_back(Tesla);
+	v_spFahrzeuge.push_back(BMW);
+	v_spFahrzeuge.push_back(geliehenerBMW);; //keine extra kopie muss gemacht werden
+	v_spFahrzeuge.push_back(std::move(v_upFahrzeuge.at(0)));
+	std::cout << "Anzahl der Referenzen von BMW:::" << BMW.use_count() << std::endl;
+
+	for (std::vector<shared_ptr<Fahrzeug>>::iterator it = v_spFahrzeuge.begin(); it != v_spFahrzeuge.end(); ++it) {
+		std::cout << (*it ? (*it)->getName() : "Nicht gefunden") << endl;
+	}
+
+
+
+	delete Porsche911;
 }
 
 

@@ -17,9 +17,20 @@ Fahrzeug::Fahrzeug(std::string fahrzeugName) : p_sName(fahrzeugName), p_iID(p_iM
 			<< "└ ID: " << p_iID << endl;
 }
 
-Fahrzeug::~Fahrzeug() {
-	cout 	<< "┌ Fahrzeug zerstört!" << endl
-			<< "├" << ((p_sName == "") ? "Name nicht vergeben" : p_sName) << endl //hier klammern da cout niedrigere prio hat
+//Konstruktor fahrzeugName + MaxGeschwindigkeit
+Fahrzeug::Fahrzeug(std::string fahrzeugName, double maxGeschwindigkeit) : p_iID(p_iMaxID++), p_sName(fahrzeugName), p_dMaxGeschwindigkeit(maxGeschwindigkeit) {
+	cout 	<< "┌ Fahrzeug erstellt!" << endl
+			<< "├ Name: " << p_sName << endl
+			<< "├ Maximale Geschwindigkeit: " << endl
 			<< "└ ID: " << p_iID << endl;
 }
 
+Fahrzeug::~Fahrzeug() {
+	cout 	<< "┌ Fahrzeug zerstört!" << endl
+			<< "├ " << ((p_sName == "") ? "Name nicht vergeben" : p_sName) << endl //hier klammern da cout niedrigere prio hat
+			<< "└ ID: " << p_iID << endl;
+}
+
+std::string Fahrzeug::getName() const {
+	return this->p_sName;
+}
