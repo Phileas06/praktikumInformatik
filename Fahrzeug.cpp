@@ -1,6 +1,8 @@
 #include "Fahrzeug.h"
 #include <string> //best practice aber nicht notwendig, include guards regelt
 
+using namespace std;
+
 //Default-Konstruktor
 Fahrzeug::Fahrzeug() : p_iID(p_iMaxID++) {
 	cout 	<< "┌ Fahrzeug erstellt!" << endl
@@ -18,7 +20,7 @@ Fahrzeug::Fahrzeug(std::string fahrzeugName) : p_sName(fahrzeugName), p_iID(p_iM
 }
 
 //Konstruktor fahrzeugName + MaxGeschwindigkeit
-Fahrzeug::Fahrzeug(std::string fahrzeugName, double maxGeschwindigkeit) : p_iID(p_iMaxID++), p_sName(fahrzeugName), p_dMaxGeschwindigkeit(maxGeschwindigkeit) {
+Fahrzeug::Fahrzeug(std::string fahrzeugName, double maxGeschwindigkeit) : p_iID(p_iMaxID++), p_sName(fahrzeugName), p_dMaxGeschwindigkeit(maxGeschwindigkeit > 0 ? maxGeschwindigkeit : 0) {
 	cout 	<< "┌ Fahrzeug erstellt!" << endl
 			<< "├ Name: " << p_sName << endl
 			<< "├ Maximale Geschwindigkeit: " << endl
@@ -33,4 +35,8 @@ Fahrzeug::~Fahrzeug() {
 
 std::string Fahrzeug::getName() const {
 	return this->p_sName;
+}
+
+double Fahrzeug::getMaxVelocity() const {
+	return this->p_dMaxGeschwindigkeit;
 }
