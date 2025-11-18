@@ -3,7 +3,8 @@
 
 #include <string>
 #include <iostream>
-using namespace std;
+
+//niemals namespace in header dateien
 
 class Fahrzeug {
 private:
@@ -31,6 +32,8 @@ public:
 	~Fahrzeug();
 
 	std::string getName() const;
+
+	double getMaxVelocity() const;
 };
 
 #endif

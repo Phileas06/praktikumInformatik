@@ -5,7 +5,7 @@
 #include "Fahrzeug.h" //niemals cpp datei hier importieren
 
 auto testToCheckUniquePointer(std::unique_ptr<Fahrzeug> ptr) {
-	std::cout << "Funktionswechsel hat geklappt!" << ptr->getName() << endl;
+	std::cout << "Funktionswechsel hat geklappt!" << ptr->getName() << std::endl;
 	return ptr;
 }
 
@@ -34,7 +34,7 @@ auto vAufgabe_1() {
 
 	FerrariPtr = testToCheckUniquePointer(std::move(FerrariPtr));
 
-	std::cout << "Test" << FerrariPtr->getName() << endl;
+	std::cout << "Test" << FerrariPtr->getName() << std::endl;
 
 	//Shared Pointer
 	auto Tesla = std::make_shared<Fahrzeug>("Tesla");
@@ -48,7 +48,7 @@ auto vAufgabe_1() {
 
 	//shared pointer vector
 
-	std::vector<shared_ptr<Fahrzeug>> v_spFahrzeuge;
+	std::vector<std::shared_ptr<Fahrzeug>> v_spFahrzeuge;
 
 	v_spFahrzeuge.push_back(Tesla);
 	v_spFahrzeuge.push_back(BMW);
@@ -56,12 +56,28 @@ auto vAufgabe_1() {
 	v_spFahrzeuge.push_back(std::move(v_upFahrzeuge.at(0)));
 	std::cout << "Anzahl der Referenzen von BMW:::" << BMW.use_count() << std::endl;
 
+	/*
 	for (std::vector<shared_ptr<Fahrzeug>>::iterator it = v_spFahrzeuge.begin(); it != v_spFahrzeuge.end(); ++it) {
 		std::cout << (*it ? (*it)->getName() : "Nicht gefunden") << endl;
+	}
+	*/
+
+	Fahrzeug McLaren("McLaren", 350);
+	Fahrzeug* Mercedes = new Fahrzeug("Mercedes", 150);
+	auto RollsRoyce = std::make_unique<Fahrzeug>("RollsRoyce", 120);
+	auto OpelCorsa = std::make_shared<Fahrzeug>("Opel Corsa", 30);
+
+	v_spFahrzeuge.push_back(std::move(OpelCorsa));
+	v_spFahrzeuge.push_back(std::move(RollsRoyce));
+	v_spFahrzeuge.push_back(std::make_unique<Fahrzeug>(McLaren));
+
+	for (std::vector<std::shared_ptr<Fahrzeug>>::iterator it = v_spFahrzeuge.begin(); it != v_spFahrzeuge.end(); ++it) {
+		std::cout << "Maximalgeschwindidkeit: " << (*it)->getMaxVelocity() << std::endl;
 	}
 
 
 
+	delete Mercedes;
 	delete Porsche911;
 }
 
