@@ -77,6 +77,12 @@ auto vAufgabe_1() {
 
 
 
+	Fahrzeug::vKopf();
+	Porsche911->vAusgeben();
+	std::cout << std::endl;
+	McLaren.vAusgeben();
+	std::cout << std::endl;
+
 	delete Mercedes;
 	delete Porsche911;
 }
