@@ -7,7 +7,7 @@ using namespace std;
 
 class Fahrzeug {
 private:
-	std::string p_sName = {};
+	std::string p_sName = {}; //initialisiere als leeren string
 	double p_dGesamtStrecke;
 	double p_dGesamtZeit; //gesamte Fahrzeit
 	double p_dZeit; //Zeit zu der das Fahrzeug zuletzt simuliert wurde
