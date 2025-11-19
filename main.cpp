@@ -9,6 +9,38 @@ auto testToCheckUniquePointer(std::unique_ptr<Fahrzeug> ptr) {
 	return ptr;
 }
 
+enum class Programm {
+	isKilled,
+	isRunning,
+	isSimulating,
+	status = Programm::isRunning
+};
+
+
+void vAufgabe_1a() {
+	char input;
+	std::string name;
+	double maxVelocity;
+	while(Programm::status == Programm::isRunning) {
+		std::cout << "Möchtest du ein weiteres Fahrzeug erstellen?" << std::endl << "[J] Ja" << std::endl << "[N] Nein" << std::endl;
+		std::cin >> input; //debug, was wenn zahl, wenn string
+		switch (input) {
+			case 'n':
+				std::cout << "Straßennetz wird simuliert..." << std::endl; // << "Zum Abbrechen [X] drücken" << std::endl; //wie handle ich programm abbruch?
+				Programm::status = Programm::isSimulating;
+
+				break;
+			case 'j':
+				std::cout << "Gib den Namen des Fahrzeuges ein: " << std::endl;
+				std::cin >> name;
+				std::cout << "Gib die maximale Geschwindigkeit des Fahrzeugs ein:" << std::endl;
+				std::cin >> maxVelocity;
+				break;
+			default: continue;
+		}
+	}
+}
+
 auto vAufgabe_1() {
 	Fahrzeug Zug("ICE");
 	auto BMW = std::make_shared<Fahrzeug>("BMW");
