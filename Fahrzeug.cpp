@@ -11,8 +11,6 @@ using namespace std;
 #define LENGHT_MAXGESCHWINDIGKEIT 50
 #define LENGHT_GESAMTSTRECKE 15 //13 länge des wortes + 2 puffer
 
-extern double dGlobaleZeit;
-
 
 
 //Default-Konstruktor
@@ -35,7 +33,7 @@ Fahrzeug::Fahrzeug(std::string fahrzeugName) : p_sName(fahrzeugName), p_dStartZe
 Fahrzeug::Fahrzeug(std::string fahrzeugName, double maxGeschwindigkeit) : p_sName(fahrzeugName), p_dMaxGeschwindigkeit(maxGeschwindigkeit > 0 ? maxGeschwindigkeit : 0), p_dStartZeitpunkt(dGlobaleZeit), p_iID(p_iMaxID++) {
 	cout 	<< "┌ Fahrzeug erstellt!" << endl
 			<< "├ Name: " << p_sName << endl
-			<< "├ Maximale Geschwindigkeit: " << endl
+			<< "├ Maximale Geschwindigkeit: " << p_dMaxGeschwindigkeit << endl
 			<< "└ ID: " << p_iID << endl;
 }
 
@@ -54,7 +52,7 @@ int iIDCalcLen(int iID) {
 	};
 	return (ilen < 5) ? 5 : ilen;
 }
-
+/*
 double Fahrzeug::dConvertVelocity(double dVelocity, Velocity iConversionInstruction) {
 	switch(iConversionInstruction) {
 	case Velocity::toMeterPerSecond:
@@ -67,7 +65,7 @@ double Fahrzeug::dConvertVelocity(double dVelocity, Velocity iConversionInstruct
 		return 0;
 	}
 }
-
+*/
 std::string Fahrzeug::getName() const {
 	return this->p_sName;
 }
@@ -98,8 +96,7 @@ void Fahrzeug::vSimulieren() {
 	if (p_dZeit == dGlobaleZeit) {//Prüfen ob Fahrzeug in diesem Zeitabschnitt schon simuliert wurde
 		return;
 	}
-	double dDeltaTime = dGlobaleZeit - this->p_dZeit; //vergangene Zeit nach Simulationsschritt
-	this->p_dGesamtStrecke += dDeltaTime * dConvertVelocity(this->p_dMaxGeschwindigkeit, Velocity::toKilometerPerHour);//geschwindigkeit wird erhöht
-	this->p_dGesamtZeit = this->p_dStartZeitpunkt - dGlobaleZeit;
+	this->p_dGesamtStrecke += iTaktRate * this->p_dMaxGeschwindigkeit;//geschwindigkeit wird erhöht
+	this->p_dGesamtZeit = dGlobaleZeit - this->p_dStartZeitpunkt;
 	this->p_dZeit = dGlobaleZeit;
 }

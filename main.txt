@@ -11,9 +11,9 @@ auto testToCheckUniquePointer(std::unique_ptr<Fahrzeug> ptr) {
 
 enum class Programm {
 	isKilled,
-	isRunning,
+	isCreating,
 	isSimulating,
-	status = Programm::isRunning
+	status = Programm::isCreating
 };
 
 
@@ -21,7 +21,7 @@ void vAufgabe_1a() {
 	char input;
 	std::string name;
 	double maxVelocity;
-	while(Programm::status == Programm::isRunning) {
+	while(Programm::status == Programm::isCreating) {
 		std::cout << "Möchtest du ein weiteres Fahrzeug erstellen?" << std::endl << "[J] Ja" << std::endl << "[N] Nein" << std::endl;
 		std::cin >> input; //debug, was wenn zahl, wenn string
 		switch (input) {

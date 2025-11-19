@@ -6,7 +6,7 @@
 
 //niemals namespace in header dateien
 
-enum class Velocity {
+enum class Velocity { //enum class statt nur enum, damit ich Velocity::tometerPerSecond schreiben muss (namenskollisionen vermeiden)
 	toMeterPerSecond,
 	toKilometerPerHour
 };
