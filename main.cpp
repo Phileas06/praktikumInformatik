@@ -7,11 +7,16 @@
 #include "Fahrzeug.h"
 #include "GlobaleZeit.h"
 #include "activeVehicles.h"
+#include "PKW.h"
 
 std::vector<std::unique_ptr<Fahrzeug>> activeVehicles;
 
-void vCreateVehicle(std::string name, double maxVelocity) {
+void vCreateFahrzeug(std::string name, double maxVelocity) {
 	activeVehicles.push_back(std::make_unique<Fahrzeug>(name, maxVelocity));
+}
+
+void vCreatePKW(std::string name, double maxVelocity, double verbrauch, double tankvolumen) {
+	activeVehicles.push_back(std::make_unique<PKW>(name, maxVelocity, verbrauch, tankvolumen));
 }
 
 void clearBuffer() {
@@ -59,7 +64,7 @@ void vAufgabe_1a() {
 				std::cout << "Gib die maximale Geschwindigkeit des Fahrzeugs ein:" << std::endl;
 				std::cin >> maxVelocity;
 				clearBuffer();
-				vCreateVehicle(name, maxVelocity);
+				vCreatePKW(name, maxVelocity, 10, 100);
 				break;
 			default: continue;
 		}

@@ -4,12 +4,9 @@
 #include <string> //best practice aber nicht notwendig, include guards regelt
 #include <iostream>
 #include <iomanip>
+#include <limits>
 
 using namespace std;
-
-#define LENGHT_NAME 20
-#define LENGHT_MAXGESCHWINDIGKEIT 50
-#define LENGHT_GESAMTSTRECKE 15 //13 länge des wortes + 2 puffer
 
 
 
@@ -44,7 +41,7 @@ Fahrzeug::~Fahrzeug() {
 }
 
 //Bestimmt die Länge meiner ID, um dynamisch meine Tabelle anzupassen: mind. 5
-int iIDCalcLen(int iID) {
+static int iIDCalcLen(int iID) {
 	int ilen = 0;
 	while(iID > 0) {
 		iID /= 10;
@@ -74,18 +71,17 @@ double Fahrzeug::getMaxVelocity() const {
 	return this->p_dMaxGeschwindigkeit;
 }
 
-void Fahrzeug::vKopf() { //hier kein type qualifier, wie const
-	std::cout 	<< std::setw(iIDCalcLen(p_iMaxID)) << std::left << "ID"
-				<< std::setw(LENGHT_NAME) << "Name"
+void Fahrzeug::vKopf(){ //hier kein type qualifier, wie const
+	std::cout 	<< std::setw(iIDCalcLen(p_iMaxID)) << std::right << "ID  " //puffer
+				<< std::setw(LENGHT_NAME) << std::left << "Name"
 				<< std::setw(LENGHT_MAXGESCHWINDIGKEIT) << "MaxGeschwindigkeit"
-				<< std::setw(LENGHT_GESAMTSTRECKE) << "Gesamtstrecke" << endl;
-
-	std::cout	<< std::setw(iIDCalcLen(p_iMaxID) + LENGHT_NAME + LENGHT_MAXGESCHWINDIGKEIT + LENGHT_GESAMTSTRECKE)
-				<< std::setfill('-') << "" << std::setfill(' ') << std::endl;
+				<< std::setw(LENGHT_GESAMTSTRECKE) << "Gesamtstrecke"
+				<< std::setw(LENGTH_GESAMTVERBRAUCH) << std::right << "Gesamtverbrauch"
+				<< std::setw(LENGTH_TANKINHALT) << std::right <<"Tankinhalt";
 }
 
 void Fahrzeug::vAusgeben() const {
-	std::cout	<< std::setw(iIDCalcLen(p_iMaxID) - 2) << std::right << this->p_iID << "  " //puffer zur optischen trennung von name und zahl
+	std::cout	<< std::setw(iIDCalcLen(p_iMaxID) - 2) << std::right << this->p_iID << "  " //puffer
 				<< std::setw(LENGHT_NAME) << std::left << this->p_sName
 				<< std::setw(LENGHT_MAXGESCHWINDIGKEIT) << std::right << this->p_dMaxGeschwindigkeit
 				<< std::setw(LENGHT_GESAMTSTRECKE) << std::right << this->p_dGesamtStrecke;
@@ -99,4 +95,8 @@ void Fahrzeug::vSimulieren() {
 	this->p_dGesamtStrecke += iTaktRate * this->p_dMaxGeschwindigkeit;//geschwindigkeit wird erhöht
 	this->p_dGesamtZeit = dGlobaleZeit - this->p_dStartZeitpunkt;
 	this->p_dZeit = dGlobaleZeit;
+}
+
+double Fahrzeug::dTanken(double dMenge = std::numeric_limits<double>::infinity()) {
+	return 0;
 }

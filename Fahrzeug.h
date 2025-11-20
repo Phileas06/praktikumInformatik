@@ -4,6 +4,13 @@
 #include <string>
 #include <iostream>
 
+#define LENGHT_NAME 20
+#define LENGHT_MAXGESCHWINDIGKEIT 20
+#define LENGHT_GESAMTSTRECKE 15 //13 länge des wortes + 2 puffer
+#define LENGTH_UNTERKLASSE 20
+#define LENGTH_GESAMTVERBRAUCH 20
+#define LENGTH_TANKINHALT 20
+
 //niemals namespace in header dateien
 
 enum class Velocity { //enum class statt nur enum, damit ich Velocity::tometerPerSecond schreiben muss (namenskollisionen vermeiden)
@@ -12,7 +19,7 @@ enum class Velocity { //enum class statt nur enum, damit ich Velocity::tometerPe
 };
 
 class Fahrzeug {
-private:
+protected:
 	std::string p_sName = {}; //initialisiere als leeren string
 	double p_dGesamtStrecke = 0;
 	double p_dGesamtZeit = 0; //gesamte Fahrzeit
@@ -27,9 +34,10 @@ private:
 	static inline int p_iMaxID = 0;
 
 
-	int iCalcIDLen(int iID); //const?
+	static int iCalcIDLen(int iID); //const?
 	double dConvertVelocity(double dvelocity, Velocity iconversionInstruction);
 public:
+	virtual double dTanken(double dMenge);
 
 	//Default-Konstruktor
 	Fahrzeug();
@@ -41,7 +49,7 @@ public:
 	Fahrzeug(std::string fahrzeugName, double gesamtStrecke);
 
 	//Default-Destruktor
-	~Fahrzeug();
+	virtual ~Fahrzeug(); // Destruktor immer als virtual
 
 	std::string getName() const;
 
@@ -49,9 +57,9 @@ public:
 
 	static void vKopf();
 
-	void vAusgeben() const;
+	virtual void vAusgeben() const; //virtual nur in Basisklasse notwendig
 
-	void vSimulieren(); //hier nicht const, da es werte ändert
+	virtual void vSimulieren(); //hier nicht const, da es werte ändert
 };
 
 #endif

@@ -4,12 +4,13 @@
 #include "programm.h"
 #include "activeVehicles.h"
 #include "Fahrzeug.h"
+#include "PKW.h"
 
 double iTaktRate; //Simulationsschritte pro Stunde
 double dGlobaleZeit = 0.0;
 
 void vKillProgramm() {
-	std::cout << "Programm wird beendet..." << std::endl;
+	std::cout << "Programm wurde erfolreich beendet." << std::endl;
 	PROGRAMM_STATUS = Programm::isKilled;
 	return;
 }
@@ -26,6 +27,10 @@ void vGlobalClock() {
 
 		//Simulation und Ausgabe der Daten:
 		Fahrzeug::vKopf();
+		std::cout << std::endl << std::setw(LENGTH_TANKINHALT + LENGTH_GESAMTVERBRAUCH + LENGTH_UNTERKLASSE + LENGHT_GESAMTSTRECKE + LENGHT_MAXGESCHWINDIGKEIT + LENGHT_NAME);
+		std::cout << std::setfill('-');
+		std::cout << "-" << std::endl;
+		std::cout << std::setfill(' ');
 		for (auto it = activeVehicles.begin(); it != activeVehicles.end(); ++it) {
 			(*it)->vSimulieren();
 			(*it)->vAusgeben();
