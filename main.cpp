@@ -1,6 +1,9 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <cmath>
+#include <algorithm>
+#include <iomanip>
 
 #include "Fahrzeug.h"
 #include "PKW.h"
@@ -92,12 +95,6 @@ void vAufgabe_3() { //ACHTUNG:: MANUELLES ERSTELLEN VON FAHRZEUGEN OHNE HINZUFÜ
 using namespace std;
 extern double dGlobaleZeit;
 double dEpsilon = 0.001;
-
-#include <algorithm>
-#include <iostream>
-#include <vector>
-#include <iomanip>
-#include <cmath>
 
 void vAufgabe_AB1() {
 
