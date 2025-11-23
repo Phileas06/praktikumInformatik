@@ -1,25 +1,22 @@
+//Include Guard
 #ifndef FAHRRAD_H_
 #define FAHRRAD_H_
 
+#include <string>
 #include <iostream>
 
 #include "Fahrzeug.h"
 
-class Fahrrad : public Fahrzeug
-{
-private:
-
-	//private hier
+class Fahrrad : public Fahrzeug {
 public:
-	Fahrrad();
+	Fahrrad(std::string sFahrzeugName, double dMaxGeschwindigkeit);
 
-	static void vKopf();
+	virtual ~Fahrrad();
 
-	virtual void vAusgeben() const override; //auch hier virtual
+	double dGeschwindigkeit() override;
 
-	double dTanken(double dMenge) override;
+	virtual void vAusgeben(std::ostream&) const override;
 
 };
-
 
 #endif

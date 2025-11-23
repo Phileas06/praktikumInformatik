@@ -1,65 +1,63 @@
-#ifndef FAHRZEUG_H
-#define FAHRZEUG_H
+//Include Guards
+#ifndef FAHRZEUG_H_
+#define FAHRZEUG_H_
 
 #include <string>
 #include <iostream>
 
-#define LENGHT_NAME 20
-#define LENGHT_MAXGESCHWINDIGKEIT 20
-#define LENGHT_GESAMTSTRECKE 15 //13 länge des wortes + 2 puffer
-#define LENGTH_UNTERKLASSE 20
-#define LENGTH_GESAMTVERBRAUCH 20
-#define LENGTH_TANKINHALT 20
-
-//niemals namespace in header dateien
-
-enum class Velocity { //enum class statt nur enum, damit ich Velocity::tometerPerSecond schreiben muss (namenskollisionen vermeiden)
-	toMeterPerSecond,
-	toKilometerPerHour
-};
+#include "Layoutkonstanten.h"
 
 class Fahrzeug {
-protected:
-	std::string p_sName = {}; //initialisiere als leeren string
-	double p_dGesamtStrecke = 0;
-	double p_dGesamtZeit = 0; //gesamte Fahrzeit
-	double p_dZeit = 0; //Zeit zu der das Fahrzeug zuletzt simuliert wurde :: muss eventuell auf globale Zeit gesetzt werden
-	double p_dMaxGeschwindigkeit = 0; //im km/h
-
-	//Eigene
-	double p_dStartZeitpunkt; // wird in konstruktoren initialisiert
-
-	const int p_iID; //nicht mit 0 vorbesetzen da const. Muss spätestens im Konstruktor definiert werden
-
+private:
 	static inline int p_iMaxID = 0;
 
+protected:
+	std::string p_sName = {};
+	double p_dGesamtStrecke = 0; //in km
+	double p_dGesamtZeit = 0; //gesamte Fahrzeit
+	double p_dZeit = 0; //Zeit zu der das Objekt zuletzt simuliert wurde
+	double p_dMaxGeschwindigkeit = 0; //in km/h,
+	double p_dAktuelleGeschwindigkeit; //in km/h,
 
-	static int iCalcIDLen(int iID); //const?
-	double dConvertVelocity(double dvelocity, Velocity iconversionInstruction);
+	const double p_dStartZeitpunkt; //MUSS in Konstruktor definiert werden
+	const int p_iID;
+
+
+
 public:
-	virtual double dTanken(double dMenge);
 
-	//Default-Konstruktor
+	//Konstruktoren und Destruktoren:
 	Fahrzeug();
 
-	//Konstruktor FahrzeugName
-	Fahrzeug(std::string fahrzeugName);
+	Fahrzeug(std::string sFahrzeugName);
 
-	//Konstruktor FahrzeugName & MaxGeschwindigkeit
-	Fahrzeug(std::string fahrzeugName, double gesamtStrecke);
+	Fahrzeug(std::string sFahrzeugName, double dGesamtStrecke);
 
-	//Default-Destruktor
-	virtual ~Fahrzeug(); // Destruktor immer als virtual
+	Fahrzeug(Fahrzeug&) = delete; //Copy-Konstruktor wird verboten
 
-	std::string getName() const;
+	virtual ~Fahrzeug();
 
-	double getMaxVelocity() const;
+	//Funktionen:
+
+	void operator=(const Fahrzeug& ObjektMitStammdaten);
+
+	bool operator<(const Fahrzeug& vergleichsFahrzeug);
+
+	virtual double dTanken(double dMenge = 55);
+
+
+	virtual double dGeschwindigkeit();
+
+	static int getMaxID();
+
+	//Simulation und Ausgeben:
 
 	static void vKopf();
 
-	virtual void vAusgeben() const; //virtual nur in Basisklasse notwendig
+	virtual void vAusgeben(std::ostream& o) const;
 
-	virtual void vSimulieren(); //hier nicht const, da es werte ändert
+	virtual void vSimulieren();
+
 };
 
 #endif

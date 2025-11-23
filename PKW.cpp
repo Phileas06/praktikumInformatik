@@ -1,31 +1,62 @@
-#include <iostream>
 #include <string>
+#include <iostream>
 #include <limits>
 #include <iomanip>
 
+
+
+#include "Zeit.h"
 #include "PKW.h"
-#include "GlobaleZeit.h"
-#include "Fahrzeug.h" //für Konstanten
+#include "Fahrzeug.h"
 
 
+//Konstruktoren und Destruktoren
+PKW::PKW(std::string sFahrzeugName, double dMaxGeschwindigkeit, double dVerbrauch)
+: Fahrzeug(sFahrzeugName, dMaxGeschwindigkeit), p_dVerbrauch(dVerbrauch), p_dTankvolumen(55), p_dTankinhalt(55/2) {};
 
-PKW::PKW(std::string fahrzeugName, double maxGeschwindigkeit, double verbrauch, double tankvolumen = 55)
-: Fahrzeug(fahrzeugName, maxGeschwindigkeit), p_dVerbrauch(verbrauch), p_dTankvolumen(tankvolumen), p_dTankinhalt(tankvolumen/2) { //p_iID wurde bereits im Fahrzeug Konstruktor festgelegt
-	std::cout 	<< "┌ PKW erstellt!" << std::endl
-				<< "├ Name: " << p_sName << std::endl
-				<< "└ ID: " << p_iID << std::endl;
+PKW::PKW(std::string sFahrzeugName, double dMaxGeschwindigkeit, double dVerbrauch, double dTankvolumen) //Tankvolumen wird immer mitgegeben
+: Fahrzeug(sFahrzeugName, dMaxGeschwindigkeit), p_dVerbrauch(dVerbrauch), p_dTankvolumen(dTankvolumen > 0 ? dTankvolumen : 55), p_dTankinhalt(dTankvolumen/2) {};
+
+PKW::~PKW() {};
+
+void PKW::vAusgeben(std::ostream& ostream) const {
+	Fahrzeug::vAusgeben(ostream);
+	ostream 		<< std::resetiosflags(std::ios::left) << std::setiosflags(std::ios::right) << std::setw(LÄNGE_GESAMT_VERBRAUCH - 1)
+					<< p_dGesamtStrecke * p_dVerbrauch/100 << "l" // - n in setw() um Größe der Einheit zu berücksichtigen
+					<< std::resetiosflags(std::ios::left) << std::setiosflags(std::ios::right)
+					<< std::setw(LÄNGE_TANKINHALT - 1) << p_dTankinhalt << "l";
 };
 
-PKW::~PKW() {
-	std::cout 	<< "┌ PKW zerstört!" << std::endl
-					<< "├ Name: " << p_sName << std::endl
-					<< "└ ID: " << p_iID << std::endl;
+void PKW::vSimulieren() {
+	if (p_dZeit == dGlobaleZeit) return; //Prüfen ob Fahrzeug in diesem Zeitabschnitt schon simuliert wurde
+
+
+
+	//Tankinhalt wird simuliert
+	double dZurueckgelegteStrecke = (dGlobaleZeit - p_dZeit) * p_dMaxGeschwindigkeit; //Berechnung durch Zeitdifferenz
+	if (p_dTankinhalt > 0) {
+		Fahrzeug::vSimulieren(); //Aufruf bereits hier notwendig, da sonst aktuelle geschwindigkeit evtl. auf 0 gesetzt wurde
+
+		if (p_dTankinhalt - dZurueckgelegteStrecke * (p_dVerbrauch / 100) > 0) { //überprüfen, ob tank nach berechnetem Verbrauch leer ist
+			p_dTankinhalt -= dZurueckgelegteStrecke * (p_dVerbrauch / 100);
+			p_dAktuelleGeschwindigkeit = p_dMaxGeschwindigkeit;
+			return; //sonst 2facher aufruf
+		} else {
+			p_dTankinhalt = 0; //
+			p_dAktuelleGeschwindigkeit = 0;
+		}
+		//Fährt durch Reserve weiter, auch wenn Tankinhalt nicht ausreichen würde
+	}
+	Fahrzeug::vSimulieren(); //Aufruf hier notwendig, da sonst p_dZeit nicht gesetzt wird => gesamteStrecke wird nach Auftanken gefahren (PKW hat nie gehalten)
+							//Zeitvergleich in vSimulieren regelt eventuellen doppelten Aufruf
 }
 
-double PKW::dTanken(double dMenge = std::numeric_limits<double>::infinity()) {
+
+double PKW::dTanken(double dMenge = std::numeric_limits<double>::infinity()) { //dMenge = 0, oder nicht angeben => volltanken
+	if (dMenge == 0) dMenge = std::numeric_limits<double>::infinity();
+
 	double dGetankteMenge = 0;
-	if (p_dTankinhalt + dMenge > p_dTankvolumen) {
-		// Nichts angegeben: Volltanken
+	if (p_dTankinhalt + dMenge > p_dTankvolumen) { //Volltanken
 		dGetankteMenge = p_dTankvolumen - p_dTankinhalt;
 		p_dTankinhalt = p_dTankvolumen;
 	} else {
@@ -34,31 +65,3 @@ double PKW::dTanken(double dMenge = std::numeric_limits<double>::infinity()) {
 	}
 	return dGetankteMenge;
 }
-
-void PKW::vSimulieren() {
-	if (p_dZeit == dGlobaleZeit) {//Prüfen ob Fahrzeug in diesem Zeitabschnitt schon simuliert wurde
-		return;
-	}
-	Fahrzeug::vSimulieren();
-	double dZurueckgelegteStrecke = iTaktRate * p_dMaxGeschwindigkeit;
-
-	if (p_dTankinhalt - (dZurueckgelegteStrecke / 100) * p_dVerbrauch > 0) {
-		p_dTankinhalt = (dZurueckgelegteStrecke / 100) * p_dVerbrauch;
-	} else { // liegen geblieben
-		p_dTankinhalt = 0;
-		//ACHTUNG: HIER MUSS NOCH NACHTANKEN FUNKTIONALITÄT
-	}
-}
-
-void PKW::vAusgeben() const {
-	Fahrzeug::vAusgeben();
-	std::cout 	<< std::setw(LENGTH_GESAMTVERBRAUCH) << std::right << p_dGesamtStrecke / p_dTankinhalt
-				<< std::setw(LENGTH_TANKINHALT) << std::right << p_dTankinhalt;
-
-};
-
-
-
-
-
-//OVERRIDE FUNKTION NOCH DEFINIEREN

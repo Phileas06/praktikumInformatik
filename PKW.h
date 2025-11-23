@@ -1,8 +1,8 @@
-#ifndef PKW_H_ //include guard, aufwendiger aber kompatibler als #pragma once
+//Include Guard
+#ifndef PKW_H_
 #define PKW_H_
 
 #include <iostream>
-#include <string>
 
 #include "Fahrzeug.h"
 
@@ -10,17 +10,27 @@ class PKW : public Fahrzeug {
 private:
 	double p_dVerbrauch; //in Liter /100km
 	double p_dTankvolumen;
-	double p_dTankinhalt; //in Liter
+	double p_dTankinhalt; //Standard 50% Tankvolumen
+
 public:
-	virtual void vAusgeben() const override; //auch hier virtual, auch wenn nicht notwendig (da basisklasse aussreicht)
+	//Konstruktoren und Destruktoren
+	PKW(std::string sFahrzeugName, double dMaxGeschwindigkeit, double dVerbrauch);
+
+	PKW(std::string sFahrzeugName, double dMaxGeschwindigkeit, double dVerbrauch, double dTankvolumen); //2 Elemente für Basisklassenkonstruktor
+
+	virtual ~PKW();
+
+	//Funktionen
+	double dTanken(double dMenge) override;
+
+	//Simulation und Ausgeben
+
+	virtual void vAusgeben(std::ostream& o) const override;
 
 	virtual void vSimulieren() override;
 
-	PKW(std::string fahrzeugName, double maxGeschwindigkeit, double verbrauch, double tankvolumen); //2 Elemente für die Basisklassenkonstruktor
 
-	~PKW();
 
-	double dTanken(double dMenge) override; //größtmöglicher wert (laut Aufgabe)
 };
 
 #endif

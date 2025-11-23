@@ -1,77 +1,150 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <cstdio>
 
-#include "programm.h"
 #include "Fahrzeug.h"
-#include "GlobaleZeit.h"
-#include "activeVehicles.h"
 #include "PKW.h"
+#include "Fahrrad.h"
+#include "Programm.h"
+#include "Ausgabeverwaltung.h"
+#include "AktiveFahrzeuge.h"
+#include "Zeit.h"
 
-std::vector<std::unique_ptr<Fahrzeug>> activeVehicles;
+void vAufgabe_1() {
+	Fahrzeug Zug("ICE");
+	auto BMW = std::make_shared<Fahrzeug>("BMW");
 
-void vCreateFahrzeug(std::string name, double maxVelocity) {
-	activeVehicles.push_back(std::make_unique<Fahrzeug>(name, maxVelocity));
-}
+	BMW.use_count();
+	auto geliehenerBMW = BMW;
+	BMW.use_count();
 
-void vCreatePKW(std::string name, double maxVelocity, double verbrauch, double tankvolumen) {
-	activeVehicles.push_back(std::make_unique<PKW>(name, maxVelocity, verbrauch, tankvolumen));
-}
+	Fahrzeug BUS;
+	Fahrzeug* Porsche911 = new Fahrzeug("Porsche911"); // erstellt objekt und speichert auf heap
+	delete Porsche911;
 
-void clearBuffer() {
-	std::cin.ignore(1000, '\n'); //leert den buffer, um fehlerhafte eingaben zu korrigieren
-}
+	auto FerrariPtr = std::make_unique<Fahrzeug>("Ferrari");
+	auto BugattiChiron = std::make_unique<Fahrzeug>("Bugatti Chiron");
 
-void vScanString(std::string& name) {
+	//Shared Pointer
+	auto Tesla = std::make_shared<Fahrzeug>("Tesla");
 
-	while (true) {
-		// 1. Eingabe
-		std::getline(std::cin, name);
-		if (!name.empty()) { // Prüft, ob das Lesen erfolgreich war
-			// Erfolg
 
-			break;
-		} else {
-			// 2. Fehlerbehebung
-			std::cout << "Fehler beim Einlesen." << std::endl;
-			std::cin.clear(); // Setzt das Fehler-Flag zurück
-			//clearBuffer();
-			std::cout << "Erneut eingeben:" << std::endl;
-			continue;
-		}
-	}
+	//vektor erzeugen mit den elementen der unique pointer
+	std::vector<std::unique_ptr<Fahrzeug>> UniqueFahrzeuge;
+
+	UniqueFahrzeuge.push_back(std::move(FerrariPtr)); //Move, sonst wird probiert, Kopie zu erstellen
+	UniqueFahrzeuge.push_back(std::move(BugattiChiron));
+
+	UniqueFahrzeuge.clear();
+
+	std::vector<std::shared_ptr<Fahrzeug>> SharedFahrzeuge;
+	SharedFahrzeuge.push_back(BMW);
+	SharedFahrzeuge.push_back(std::move(FerrariPtr));
+
+
 }
 
 void vAufgabe_1a() {
-	char input;
-	std::string name;
-	double maxVelocity;
-	while(PROGRAMM_STATUS == Programm::isCreating) {
-		std::cout << "Möchtest du ein weiteres Fahrzeug erstellen?" << std::endl << "[J] Ja" << std::endl << "[N] Nein" << std::endl;
-		std::cin >> input; //debug, was wenn zahl, wenn string
-		clearBuffer();
-		switch (input) {
-			case 'n':
-				PROGRAMM_STATUS = Programm::isSimulating;
-				vGlobalClock();
-				break;
-			case 'j':
-				std::cout << "Gib den Namen des Fahrzeuges ein: " << std::endl;
-				vScanString(name);
+	Programm::Startup();
+}
+
+void vAufgabe_2() {
+
+	vSetTimePoint(3); // hier true, um 3 Stunden bis Tankfüllung zu signalisieren
+	Programm::Startup();
+
+	//Logik für Tanken nach 3h in Globaler Uhr
 
 
-				std::cout << "Gib die maximale Geschwindigkeit des Fahrzeugs ein:" << std::endl;
-				std::cin >> maxVelocity;
-				clearBuffer();
-				vCreatePKW(name, maxVelocity, 10, 100);
-				break;
-			default: continue;
-		}
-	}
+	//Noch implementieren
+}
+
+void vAufgabe_3() { //ACHTUNG:: MANUELLES ERSTELLEN VON FAHRZEUGEN OHNE HINZUFÜGEN ZU AKTIVEFAHRZEUGE => FEHLER (bspw. ID Tanken wird verschoben
+	Fahrzeug ZUG("ICE", 130);
+	PKW Audi("Audi", 130, 8.4, 80);
+
+	PKW FakeAudi("FakeAudi", 90, 9.5, 40);
+
+	auto BMW = std::make_unique<PKW>("BMW", 131, 4.2, 100);
+	auto Mountainbike = std::make_unique<Fahrrad>("Mountainbike", 25);
+
+	AktiveFahrzeuge.push_back(std::move(BMW));
+	AktiveFahrzeuge.push_back(std::move(Mountainbike));
+
+
+	Fahrzeug::vKopf();
+	std::cout << ZUG << std::endl;
+	std::cout << Audi << std::endl;
+	std::cout << *AktiveFahrzeuge[0] << std::endl;
+	std::cout << *AktiveFahrzeuge[1] << std::endl;
+
+	Programm::Simulationsvorbereitung();
+
+	std::cout << ((ZUG < Audi) ? "Zug hat weniger Strecke zurueckgelegt, als der Audi" : "Zug hat mehr Strecke zurueckgelegt als der Audi") << std::endl;
+
+	std::cout << FakeAudi << std::endl;
+
+	FakeAudi = Audi;
+
+	std::cout << FakeAudi << std::endl;
+}
+
+using namespace std;
+extern double dGlobaleZeit;
+double dEpsilon = 0.001;
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
+#include <iomanip>
+#include <cmath>
+
+void vAufgabe_AB1() {
+
+    int l = 0; // Laufindex für gezielte AUsgabe
+    vector<int> ausgabe{13};
+    double dTakt = 0.4;
+
+    std::vector<unique_ptr<Fahrzeug>> vecFahrzeuge;
+    vecFahrzeuge.push_back(make_unique <PKW>("Audi", 231, 11.4));
+    vecFahrzeuge.push_back(make_unique <Fahrrad>("BMX", 19.8));
+    for (dGlobaleZeit = 0; dGlobaleZeit < 10; dGlobaleZeit += dTakt)
+    {
+        auto itL = find(ausgabe.begin(), ausgabe.end(), l);
+        if (itL != ausgabe.end()) {
+            std::cout << std::endl << l <<  " Globalezeit = " << dGlobaleZeit << std::endl;
+            Fahrzeug::vKopf();
+        }
+
+        for (int i = 0; i < (int) vecFahrzeuge.size(); i++)
+        {
+            vecFahrzeuge[i]->vSimulieren();
+            if (fabs(dGlobaleZeit - 3.0) < dTakt/2)
+            {
+                vecFahrzeuge[i]->dTanken(0);
+            }
+            if (itL != ausgabe.end()) {
+                std::cout << *vecFahrzeuge[i] << endl;
+            }
+        }
+        l++;
+    }
+    char c;
+    std::cin >> c;
 }
 
 int main() {
-	vAufgabe_1a();
+	std::cout << std::fixed;
+	std::cout.precision(2);
+
+	//vAufgabe_1();
+	//vAufgabe_1a(); //Normales Programm
+	//vAufgabe_2();
+	//vAufgabe_3();
+	//vAufgabe_Probe();
+
+	vAufgabe_AB1();
+
+	Programm::Kill();
 	return 0;
 }
